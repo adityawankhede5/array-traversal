@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Array Traversal</title>
+	<meta charset="utf-8">
+</head>
+<style>
+	html{
+		width: 100%;
+		height: 100%;
+	}
+	body{
+		height: 100%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+	#matrix{
+		/*border: 1px solid green;*/
+/*		width: 500px;
+		height: 500px;*/
+		display: flex;
+		flex-direction: column;
+	}
+	.row{
+		/*border: 1px solid green;*/
+		/*margin: 0.5px;*/
+		height: 50px;
+		display: flex;
+	}
+	.el{
+		border: 1px solid black;
+		/*margin: 1px;*/
+		width: 50px;
+		height: 50px;
+		/*background-color: white;*/
+	}
+	@keyframes glowel{
+		from{background-color: white}
+		to{background-color: #2f2f2f}
+	}
+	@keyframes unglowel{
+		from{background-color: #2f2f2f}
+		to{background-color: white}
+	}
+	.btn{
+		border:5px solid #111111;
+		margin: 5px;
+		width: 60px;
+		height:30px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+	.btn:hover{
+		background-color: #2f2f2f;
+		color: white;
+		cursor: pointer;
+	}
+
+</style>
+<body>
+	<div class="opt">
+		<span id="bfs" class="btn" onclick="setBFS()">BFS</span>
+		<span id="dfs" class="btn" onclick="setDFS()">DFS</span>
+		<span id="reset" class="btn" onclick="resetMatrix()">Reset</span>
+	</div>
+	<div id="matrix">
+		<!-- <div class="row">
+			<div class="el"></div>
+		</div> -->
+	</div>
+</body>
+<script>
+	let bfs=1;
+	let dfs=0;
+	const matrix = document.getElementById('matrix');
+	for(let i=0;i<10;i++){
+		matrix.insertAdjacentHTML('beforeend', `<div class="row" id="r-${i}" ></div>`);
+		let row=document.getElementById(`r-${i}`);
+		for(let j=0;j<10;j++){
+			row.insertAdjacentHTML('beforeend', `<div class="el col-${j}" id="el-${i}-${j}" onclick="traverse(${i},${j})"></div>`);
+		}
+	}
+
+	elements = [];
+	visited=[];
+	
+	const setBFS =()=>{
+		const bfsBtn = document.getElementById('bfs');
+		bfsBtn.style.backgroundColor = '#2f2f2f';
+		bfsBtn.style.color = 'white';
+		bfs=true;
+		
+		const dfsBtn = document.getElementById('dfs');
+		dfsBtn.style.backgroundColor = 'white';
+		dfsBtn.style.color = 'black';
+		dfs=false;	
+	}
+	const setDFS =()=>{
+		const dfsBtn = document.getElementById('dfs');
+		dfsBtn.style.backgroundColor = '#2f2f2f';
+		dfsBtn.style.color = 'white';
+		dfs=true;
+
+		const bfsBtn = document.getElementById('bfs');
+		bfsBtn.style.backgroundColor = 'white';
+		bfsBtn.style.color = '#2f2f2f';
+		bfs=false;
+	}
+	const resetMatrix=()=>{
+		for(i=0;i<10;i++){
+			for(j=0;j<10;j++){
+				visited[i][j]=false;
+				document.getElementById(`el-${i}-${j}`).style.animation = 'unglowel';
+				
+				// console.log(document.getElementById(`el-${i}-${j}`).getAttribute("background-color"));
+			}
+		}
+		// const el = document.querySelectorAll('.el');
+		// el.forEach((item)=>{
+		// 	item.setAttribute("background-color", "white");
+		// })
+	}
+
+
+	for(i=0;i<10;i++){
+		visited[i]=[10];
+	}
+
+	const traverse=(i,j)=>{
+		// console.log(i,j);
+		
+		let el = document.getElementById(`el-${i}-${j}`);
+		el.style.animation = 'glowel 1s forwards';
+		// elements.push(el);
+		visited[i][j]=true;
+		let m=0.0;
+		while(true){
+			if(i>0 && visited[i-1][j]!==true){
+				// console.log("Pushed: ",i-1,j);
+				elements.push(document.getElementById(`el-${i-1}-${j}`))
+				visited[i-1][j]=true;
+			}
+			if(i>0 && j<9 && visited[i-1][j+1]!==true){
+				// console.log("Pushed: ",i-1,j+1);
+				elements.push(document.getElementById(`el-${i-1}-${j+1}`))
+				visited[i-1][j+1]=true;
+			}
+			if(j<9 && visited[i][j+1]!==true){
+				// console.log("Pushed: ",i,j+1);
+				elements.push(document.getElementById(`el-${i}-${j+1}`))
+				visited[i][j+1]=true;
+			}
+			if(i<9 && j<9 && visited[i+1][j+1]!==true){
+				// console.log("Pushed: ",i+1,j+1);
+				elements.push(document.getElementById(`el-${i+1}-${j+1}`))
+				visited[i+1][j+1]=true;
+			}
+			if(i<9 && visited[i+1][j]!==true){
+				// console.log("Pushed: ",i+1,j);
+				elements.push(document.getElementById(`el-${i+1}-${j}`))
+				visited[i+1][j]=true;
+			}
+			if(i<9 && j>0 && visited[i+1][j-1]!==true){
+				// console.log("Pushed: ",i+1,j-1);
+				elements.push(document.getElementById(`el-${i+1}-${j-1}`))
+				visited[i+1][j-1]=true;
+			}
+			if(j>0 && visited[i][j-1]!==true){
+				// console.log("Pushed: ",i,j-1);
+				elements.push(document.getElementById(`el-${i}-${j-1}`))
+				visited[i][j-1]=true;
+			}
+			if(i>0 && j>0 && visited[i-1][j-1]!==true){
+				// console.log("Pushed: ",i-1,j-1);
+				elements.push(document.getElementById(`el-${i-1}-${j-1}`))
+				visited[i-1][j-1]=true;	
+			}
+			if(elements.length===0){
+				break;
+			}
+
+			if(bfs){
+				// Breadth First Traversal
+				el=elements[0];	
+			}else{
+				//  Depth First Traversal
+				el = elements[elements.length-1];	
+			}
+			
+			
+			el.style.animation = `glowel 1s forwards ${m}s`;
+			m+=0.04;
+			place=el.id.split('-');
+			i=parseInt(place[1]);
+			j=parseInt(place[2]);
+			
+			if(bfs){
+				//Breadth First Traversal
+				elements.shift();
+			}else{
+				// Depth First Traversal
+				elements.pop();
+			}
+		}
+		console.log("Done!")
+	}
+
+	resetMatrix();
+
+</script>
+</html>
